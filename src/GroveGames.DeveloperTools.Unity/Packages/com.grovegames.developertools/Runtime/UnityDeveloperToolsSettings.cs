@@ -4,11 +4,11 @@ using UnityEngine.UIElements;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class DeveloperToolsSettings : ScriptableObject
+    public sealed class UnityDeveloperToolsSettings : ScriptableObject, IDeveloperToolsSettings
     {
         public const string ConfigName = "com.grovegames.developertools.settings";
 
-        private static DeveloperToolsSettings? s_instance;
+        private static UnityDeveloperToolsSettings? s_instance;
 
         [Header("Open")]
         [SerializeField, Range(64, 400)] private int _cornerSize = 160;
@@ -35,23 +35,23 @@ namespace GroveGames.DeveloperTools.Unity
         public Vector2Int ReferenceResolution => _referenceResolution;
         public int SortingOrder => _sortingOrder;
 
-        public static DeveloperToolsSettings GetOrCreate()
+        public static UnityDeveloperToolsSettings GetOrCreate()
         {
 #if UNITY_EDITOR
-            if (UnityEditor.EditorBuildSettings.TryGetConfigObject(ConfigName, out DeveloperToolsSettings settings) && settings != null)
+            if (UnityEditor.EditorBuildSettings.TryGetConfigObject(ConfigName, out UnityDeveloperToolsSettings settings) && settings != null)
             {
                 return settings;
             }
 #else
             if (s_instance == null)
             {
-                var preloaded = Resources.FindObjectsOfTypeAll<DeveloperToolsSettings>();
+                var preloaded = Resources.FindObjectsOfTypeAll<UnityDeveloperToolsSettings>();
                 s_instance = preloaded.Length > 0 ? preloaded[0] : null;
             }
 #endif
             if (s_instance == null)
             {
-                s_instance = CreateInstance<DeveloperToolsSettings>();
+                s_instance = CreateInstance<UnityDeveloperToolsSettings>();
                 s_instance.hideFlags = HideFlags.DontSave;
             }
 

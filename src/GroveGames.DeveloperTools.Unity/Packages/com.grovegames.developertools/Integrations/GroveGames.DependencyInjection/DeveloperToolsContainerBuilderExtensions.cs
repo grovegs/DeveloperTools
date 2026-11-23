@@ -7,7 +7,9 @@ namespace GroveGames.DeveloperTools.Unity
     {
         public static IContainerBuilder AddDeveloperTools(this IContainerBuilder builder)
         {
-            builder.AddSingleton(DeveloperToolsSettings.GetOrCreate());
+            var settings = UnityDeveloperToolsSettings.GetOrCreate();
+            builder.AddSingleton(settings);
+            builder.AddSingleton<IDeveloperToolsSettings>(settings);
             builder.AddSingleton<DeveloperOptionsRegistry>();
             builder.AddSingleton<DeveloperToolsPageRegistry<VisualElement>>();
             builder.AddSingleton<UnityDeveloperToolsWindow>();

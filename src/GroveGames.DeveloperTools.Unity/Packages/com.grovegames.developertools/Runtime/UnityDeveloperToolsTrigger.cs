@@ -5,13 +5,13 @@ namespace GroveGames.DeveloperTools.Unity
 {
     public sealed class UnityDeveloperToolsTrigger
     {
-        private readonly DeveloperToolsSettings _settings;
+        private readonly UnityDeveloperToolsSettings _settings;
         private readonly DeveloperToolsTrigger _trigger;
 
-        public UnityDeveloperToolsTrigger(DeveloperToolsSettings settings, IDeveloperToolsWindow window)
+        public UnityDeveloperToolsTrigger(UnityDeveloperToolsSettings settings, IDeveloperToolsWindow window)
         {
             _settings = settings;
-            _trigger = new DeveloperToolsTrigger(window, settings.TapCount, settings.TapInterval);
+            _trigger = new DeveloperToolsTrigger(window, settings);
         }
 
         public void Update()

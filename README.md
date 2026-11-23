@@ -14,6 +14,7 @@ In-app developer tools: an options model read from annotated fields and methods,
 - `DeveloperOptionsRegistry` holds the option objects that are currently alive
 - `IDeveloperToolsPage<TRoot>` and `DeveloperToolsPageRegistry<TRoot>` hold the pages a tools window shows, in order; the engine picks the root type
 - `CornerTapGesture` detects quick taps in the top left corner of the screen
+- `IDeveloperToolsSettings`: the corner size, tap count and tap interval, with `DeveloperToolsSettings` as the plain implementation
 - `DeveloperToolsTrigger` opens an `IDeveloperToolsWindow` from the toggle key or the corner taps; the engine only tells it what was pressed
 - Unity: `UnityDeveloperToolsWindow`, a window built with UI Toolkit, an options page, pages that other packages add, and a settings asset
 
@@ -89,7 +90,7 @@ builder.AddDeveloperOptions<GameplayDeveloperOptions>();
 builder.AddDeveloperToolsPage<LogsPage>();
 ```
 
-The window opens with a triple tap in the top left corner or with the toggle key. Both are set in Project Settings > GroveGames > Developer Tools.
+The window opens with a triple tap in the top left corner or with the toggle key. Both are set in Project Settings > GroveGames > Developer Tools, stored in a `UnityDeveloperToolsSettings` asset. It implements `IDeveloperToolsSettings` and adds the toggle key, the theme and the fonts.
 
 ## Development
 
