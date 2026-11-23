@@ -6,11 +6,11 @@ namespace GroveGames.DeveloperTools.Unity
 {
     public sealed class DeveloperToolsPageRegistration<TPage> : IInitializable, IDisposable where TPage : class, IDeveloperToolsPage<VisualElement>
     {
-        private readonly DeveloperToolsPageRegistry<VisualElement> _registry;
+        private readonly IDeveloperToolsPageRegistry<VisualElement> _registry;
         private readonly TPage _page;
         private readonly int _order;
 
-        public DeveloperToolsPageRegistration(DeveloperToolsPageRegistry<VisualElement> registry, TPage page, int order)
+        public DeveloperToolsPageRegistration(IDeveloperToolsPageRegistry<VisualElement> registry, TPage page, int order)
         {
             _registry = registry;
             _page = page;
