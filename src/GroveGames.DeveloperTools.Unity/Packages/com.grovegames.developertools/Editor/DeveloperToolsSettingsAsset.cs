@@ -14,12 +14,12 @@ namespace GroveGames.DeveloperTools.Unity.Editor
         private const string ThemePath = "Packages/com.grovegames.developertools/Runtime/Themes/DeveloperToolsTheme.tss";
         private const string LogoPath = "Packages/com.grovegames.developertools/Runtime/Icons/GroveGamesLogo.png";
 
-        public static DeveloperToolsSettings GetOrCreate()
+        public static UnityDeveloperToolsSettings GetOrCreate()
         {
-            if (!EditorBuildSettings.TryGetConfigObject(DeveloperToolsSettings.ConfigName, out DeveloperToolsSettings settings) || settings == null)
+            if (!EditorBuildSettings.TryGetConfigObject(UnityDeveloperToolsSettings.ConfigName, out UnityDeveloperToolsSettings settings) || settings == null)
             {
                 settings = LoadOrCreate();
-                EditorBuildSettings.AddConfigObject(DeveloperToolsSettings.ConfigName, settings, true);
+                EditorBuildSettings.AddConfigObject(UnityDeveloperToolsSettings.ConfigName, settings, true);
             }
 
             AssignLogo(settings);
@@ -27,26 +27,26 @@ namespace GroveGames.DeveloperTools.Unity.Editor
             return settings;
         }
 
-        private static DeveloperToolsSettings LoadOrCreate()
+        private static UnityDeveloperToolsSettings LoadOrCreate()
         {
             CreateFolder();
-            var settings = AssetDatabase.LoadAssetAtPath<DeveloperToolsSettings>(AssetPath);
+            var settings = AssetDatabase.LoadAssetAtPath<UnityDeveloperToolsSettings>(AssetPath);
 
             if (settings != null)
             {
                 return settings;
             }
 
-            var created = ScriptableObject.CreateInstance<DeveloperToolsSettings>();
+            var created = ScriptableObject.CreateInstance<UnityDeveloperToolsSettings>();
             var serialized = new SerializedObject(created);
             serialized.FindProperty("_theme").objectReferenceValue = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(ThemePath);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.CreateAsset(created, AssetPath);
             AssetDatabase.SaveAssets();
-            return AssetDatabase.LoadAssetAtPath<DeveloperToolsSettings>(AssetPath);
+            return AssetDatabase.LoadAssetAtPath<UnityDeveloperToolsSettings>(AssetPath);
         }
 
-        private static void AssignLogo(DeveloperToolsSettings settings)
+        private static void AssignLogo(UnityDeveloperToolsSettings settings)
         {
             var logo = AssetDatabase.LoadAssetAtPath<Texture2D>(LogoPath);
 
@@ -61,7 +61,7 @@ namespace GroveGames.DeveloperTools.Unity.Editor
             AssetDatabase.SaveAssetIfDirty(settings);
         }
 
-        private static void Preload(DeveloperToolsSettings settings)
+        private static void Preload(UnityDeveloperToolsSettings settings)
         {
             var preloaded = PlayerSettings.GetPreloadedAssets();
             var assets = new List<Object>(preloaded.Length + 1);
@@ -71,7 +71,7 @@ namespace GroveGames.DeveloperTools.Unity.Editor
             {
                 var asset = preloaded[i];
 
-                if (asset is DeveloperToolsSettings && asset != settings)
+                if (asset is UnityDeveloperToolsSettings && asset != settings)
                 {
                     continue;
                 }

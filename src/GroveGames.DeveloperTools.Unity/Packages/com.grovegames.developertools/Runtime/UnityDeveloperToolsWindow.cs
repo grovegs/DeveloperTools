@@ -16,7 +16,7 @@ namespace GroveGames.DeveloperTools.Unity
         private const float TabUnderline = 6f;
         private const float MinimumHintOpacity = 0.4f;
 
-        private readonly DeveloperToolsSettings _settings;
+        private readonly UnityDeveloperToolsSettings _settings;
         private readonly DeveloperOptionsRegistry _optionsRegistry;
         private readonly DeveloperToolsPageRegistry<VisualElement> _pageRegistry;
         private readonly List<IDeveloperToolsPage<VisualElement>> _pages;
@@ -38,7 +38,7 @@ namespace GroveGames.DeveloperTools.Unity
         private bool _isOpen;
         public bool IsOpen => _isOpen;
 
-        public UnityDeveloperToolsWindow(DeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
+        public UnityDeveloperToolsWindow(UnityDeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
         {
             _settings = settings;
             _optionsRegistry = optionsRegistry;

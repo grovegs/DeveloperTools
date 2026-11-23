@@ -7,7 +7,7 @@ namespace GroveGames.DeveloperTools.Unity
         private readonly UnityDeveloperToolsWindow _window;
         private readonly UnityDeveloperToolsTrigger _trigger;
 
-        public DeveloperToolsEntryPoint(DeveloperToolsSettings settings, UnityDeveloperToolsWindow window)
+        public DeveloperToolsEntryPoint(UnityDeveloperToolsSettings settings, UnityDeveloperToolsWindow window)
         {
             _window = window;
             _trigger = new UnityDeveloperToolsTrigger(settings, window);

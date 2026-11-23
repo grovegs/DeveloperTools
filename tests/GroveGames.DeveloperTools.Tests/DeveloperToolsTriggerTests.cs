@@ -13,14 +13,20 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void Constructor_NullWindow_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => new DeveloperToolsTrigger(null!, 3, 0.5f));
+        Assert.Throws<ArgumentNullException>(() => new DeveloperToolsTrigger(null!, new DeveloperToolsSettings(160, 3, 0.5f)));
+    }
+
+    [Fact]
+    public void Constructor_NullSettings_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => new DeveloperToolsTrigger(new TestWindow(), null!));
     }
 
     [Fact]
     public void PressToggleKey_ClosedWindow_OpensIt()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 3, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressToggleKey();
 
@@ -31,7 +37,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressToggleKey_OpenWindow_ClosesIt()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 3, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
         window.Open();
 
         trigger.PressToggleKey();
@@ -43,7 +49,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressPointer_EnoughQuickTapsInCorner_OpensTheWindow()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 3, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0.2f);
@@ -58,7 +64,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressPointer_TapBeforeTheLast_ShowsTheHintWithProgress()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 3, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0.2f);
@@ -74,7 +80,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressPointer_LastTap_OpensWithoutAHint()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 1, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 1, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
 
@@ -86,7 +92,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressPointer_OutsideCorner_ResetsTheTaps()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 3, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0.1f);
@@ -101,7 +107,7 @@ public sealed class DeveloperToolsTriggerTests
     public void PressPointer_OpenWindow_DoesNothing()
     {
         var window = new TestWindow();
-        var trigger = new DeveloperToolsTrigger(window, 1, 0.5f);
+        var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 1, 0.5f));
         window.Open();
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);

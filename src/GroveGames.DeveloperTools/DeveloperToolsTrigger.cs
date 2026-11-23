@@ -7,12 +7,13 @@ public sealed class DeveloperToolsTrigger
     private readonly IDeveloperToolsWindow _window;
     private readonly CornerTapGesture _gesture;
 
-    public DeveloperToolsTrigger(IDeveloperToolsWindow window, int tapCount, float tapInterval)
+    public DeveloperToolsTrigger(IDeveloperToolsWindow window, IDeveloperToolsSettings settings)
     {
         ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(settings);
 
         _window = window;
-        _gesture = new CornerTapGesture(tapCount, tapInterval);
+        _gesture = new CornerTapGesture(settings.TapCount, settings.TapInterval);
     }
 
     public void PressToggleKey()
