@@ -4,13 +4,13 @@ namespace GroveGames.DeveloperTools.Unity
 {
     public sealed class DeveloperToolsEntryPoint : IFrameUpdatable
     {
-        private readonly DeveloperToolsWindow _window;
-        private readonly DeveloperToolsTrigger _trigger;
+        private readonly UnityDeveloperToolsWindow _window;
+        private readonly UnityDeveloperToolsTrigger _trigger;
 
-        public DeveloperToolsEntryPoint(DeveloperToolsSettings settings, DeveloperToolsWindow window)
+        public DeveloperToolsEntryPoint(DeveloperToolsSettings settings, UnityDeveloperToolsWindow window)
         {
             _window = window;
-            _trigger = new DeveloperToolsTrigger(settings, window);
+            _trigger = new UnityDeveloperToolsTrigger(settings, window);
         }
 
         public void FrameUpdate(float deltaTime)

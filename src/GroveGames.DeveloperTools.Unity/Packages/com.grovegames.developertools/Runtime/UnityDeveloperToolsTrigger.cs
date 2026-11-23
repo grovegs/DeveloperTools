@@ -3,17 +3,15 @@ using UnityEngine.InputSystem;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class DeveloperToolsTrigger
+    public sealed class UnityDeveloperToolsTrigger
     {
         private readonly DeveloperToolsSettings _settings;
-        private readonly DeveloperToolsWindow _window;
-        private readonly CornerTapGesture _gesture;
+        private readonly DeveloperToolsTrigger _trigger;
 
-        public DeveloperToolsTrigger(DeveloperToolsSettings settings, DeveloperToolsWindow window)
+        public UnityDeveloperToolsTrigger(DeveloperToolsSettings settings, IDeveloperToolsWindow window)
         {
             _settings = settings;
-            _window = window;
-            _gesture = new CornerTapGesture(settings.TapCount, settings.TapInterval);
+            _trigger = new DeveloperToolsTrigger(window, settings.TapCount, settings.TapInterval);
         }
 
         public void Update()
@@ -31,14 +29,14 @@ namespace GroveGames.DeveloperTools.Unity
                 return;
             }
 
-            _window.Toggle();
+            _trigger.PressToggleKey();
         }
 
         private void UpdatePointer()
         {
             var pointer = Pointer.current;
 
-            if (pointer == null || _window.IsOpen || !pointer.press.wasPressedThisFrame)
+            if (pointer == null || !pointer.press.wasPressedThisFrame)
             {
                 return;
             }
@@ -46,15 +44,7 @@ namespace GroveGames.DeveloperTools.Unity
             var position = pointer.position.ReadValue();
             var size = _settings.CornerSize * Screen.width / _settings.ReferenceResolution.x;
             var safeArea = Screen.safeArea;
-            var corner = CornerTapGesture.GetCorner(safeArea.xMin, safeArea.yMax, size);
-
-            if (_gesture.Tap(new System.Numerics.Vector2(position.x, position.y), corner, Time.unscaledTime))
-            {
-                _window.Open();
-                return;
-            }
-
-            _window.ShowTapHint(new Rect(safeArea.xMin, safeArea.yMax - size, size, size), _gesture.Taps, _gesture.RequiredTaps);
+            _trigger.PressPointer(new System.Numerics.Vector2(position.x, position.y), safeArea.xMin, safeArea.yMax, size, Time.unscaledTime);
         }
     }
 }

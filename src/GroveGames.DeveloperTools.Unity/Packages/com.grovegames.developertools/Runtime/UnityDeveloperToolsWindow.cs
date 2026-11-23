@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class DeveloperToolsWindow : IDisposable
+    public sealed class UnityDeveloperToolsWindow : IDeveloperToolsWindow, IDisposable
     {
         private const string HostName = "DeveloperTools";
         private const string Title = "Developer Tools";
@@ -38,7 +38,7 @@ namespace GroveGames.DeveloperTools.Unity
         private bool _isOpen;
         public bool IsOpen => _isOpen;
 
-        public DeveloperToolsWindow(DeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
+        public UnityDeveloperToolsWindow(DeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
         {
             _settings = settings;
             _optionsRegistry = optionsRegistry;
@@ -87,14 +87,14 @@ namespace GroveGames.DeveloperTools.Unity
             }
         }
 
-        public void ShowTapHint(Rect corner, int taps, int requiredTaps)
+        public void ShowTapHint(System.Numerics.Vector2 corner, float size, int taps, int requiredTaps)
         {
             if (IsOpen || taps <= 0 || taps >= requiredTaps)
             {
                 return;
             }
 
-            _hintCorner = corner;
+            _hintCorner = new Rect(corner.X - size, corner.Y, size, size);
             EnsureCreated();
             ApplySafeArea();
             _hint!.style.display = DisplayStyle.Flex;
