@@ -2,7 +2,7 @@
 
 namespace GroveGames.DeveloperTools;
 
-public sealed class DeveloperToolsPageRegistry<TRoot>
+public sealed class DeveloperToolsPageRegistry<TRoot> : IDeveloperToolsPageRegistry<TRoot>
 {
     public const int DefaultOrder = 1000;
 

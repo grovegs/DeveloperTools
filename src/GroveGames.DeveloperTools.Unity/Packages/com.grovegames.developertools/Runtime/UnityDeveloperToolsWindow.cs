@@ -18,7 +18,7 @@ namespace GroveGames.DeveloperTools.Unity
 
         private readonly UnityDeveloperToolsSettings _settings;
         private readonly DeveloperOptionsRegistry _optionsRegistry;
-        private readonly DeveloperToolsPageRegistry<VisualElement> _pageRegistry;
+        private readonly IDeveloperToolsPageRegistry<VisualElement> _pageRegistry;
         private readonly List<IDeveloperToolsPage<VisualElement>> _pages;
         private readonly List<Button> _tabs;
         private readonly EventCallback<GeometryChangedEvent> _geometryChangedHandler;
@@ -38,7 +38,7 @@ namespace GroveGames.DeveloperTools.Unity
         private bool _isOpen;
         public bool IsOpen => _isOpen;
 
-        public UnityDeveloperToolsWindow(UnityDeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
+        public UnityDeveloperToolsWindow(UnityDeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, IDeveloperToolsPageRegistry<VisualElement> pageRegistry)
         {
             _settings = settings;
             _optionsRegistry = optionsRegistry;

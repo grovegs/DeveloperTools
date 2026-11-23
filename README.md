@@ -12,7 +12,7 @@ In-app developer tools: an options model read from annotated fields and methods,
 - `[DeveloperOption]` turns a field into a toggle, slider, number, text, enum or parsable input, and a method into a button
 - `DeveloperOptionsReader` reads a class once and returns its options with label, header, tooltip and limits
 - `DeveloperOptionsRegistry` holds the option objects that are currently alive
-- `IDeveloperToolsPage<TRoot>` and `DeveloperToolsPageRegistry<TRoot>` hold the pages a tools window shows, in order; the engine picks the root type
+- `IDeveloperToolsPage<TRoot>`, `IDeveloperToolsPageRegistry<TRoot>` and `DeveloperToolsPageRegistry<TRoot>` hold the pages a tools window shows, in order; the engine picks the root type. In Unity that is `UnityDeveloperToolsPageRegistry`, over `VisualElement`
 - `CornerTapGesture` detects quick taps in the top left corner of the screen
 - `IDeveloperToolsSettings`: the corner size, tap count and tap interval, with `DeveloperToolsSettings` as the plain implementation
 - `DeveloperToolsTrigger` opens an `IDeveloperToolsWindow` from the toggle key or the corner taps; the engine only tells it what was pressed
