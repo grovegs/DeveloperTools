@@ -1,4 +1,5 @@
 using GroveGames.DependencyInjection;
+using UnityEngine.UIElements;
 
 namespace GroveGames.DeveloperTools.Unity
 {
@@ -8,7 +9,7 @@ namespace GroveGames.DeveloperTools.Unity
         {
             builder.AddSingleton(DeveloperToolsSettings.GetOrCreate());
             builder.AddSingleton<DeveloperOptionsRegistry>();
-            builder.AddSingleton<DeveloperToolsPageRegistry>();
+            builder.AddSingleton<DeveloperToolsPageRegistry<VisualElement>>();
             builder.AddSingleton<DeveloperToolsWindow>();
 #if GROVEGAMES_INPUT
             builder.AddSingleton<DeveloperToolsInputBlocker>();
@@ -22,10 +23,10 @@ namespace GroveGames.DeveloperTools.Unity
             return builder.AddSingleton<DeveloperOptionsRegistration<TOptions>>();
         }
 
-        public static IContainerBuilder AddDeveloperToolsPage<TPage>(this IContainerBuilder builder, int order = DeveloperToolsPageRegistry.DefaultOrder) where TPage : class, IDeveloperToolsElementPage
+        public static IContainerBuilder AddDeveloperToolsPage<TPage>(this IContainerBuilder builder, int order = DeveloperToolsPageRegistry<VisualElement>.DefaultOrder) where TPage : class, IDeveloperToolsPage<VisualElement>
         {
             builder.AddSingleton<TPage>();
-            return builder.AddSingleton<DeveloperToolsPageRegistration<TPage>>(resolver => new DeveloperToolsPageRegistration<TPage>(resolver.Resolve<DeveloperToolsPageRegistry>(), resolver.Resolve<TPage>(), order));
+            return builder.AddSingleton<DeveloperToolsPageRegistration<TPage>>(resolver => new DeveloperToolsPageRegistration<TPage>(resolver.Resolve<DeveloperToolsPageRegistry<VisualElement>>(), resolver.Resolve<TPage>(), order));
         }
     }
 }

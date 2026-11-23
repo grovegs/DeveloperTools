@@ -18,8 +18,8 @@ namespace GroveGames.DeveloperTools.Unity
 
         private readonly DeveloperToolsSettings _settings;
         private readonly DeveloperOptionsRegistry _optionsRegistry;
-        private readonly DeveloperToolsPageRegistry _pageRegistry;
-        private readonly List<IDeveloperToolsElementPage> _pages;
+        private readonly DeveloperToolsPageRegistry<VisualElement> _pageRegistry;
+        private readonly List<IDeveloperToolsPage<VisualElement>> _pages;
         private readonly List<Button> _tabs;
         private readonly EventCallback<GeometryChangedEvent> _geometryChangedHandler;
         private GameObject? _host;
@@ -38,12 +38,12 @@ namespace GroveGames.DeveloperTools.Unity
         private bool _isOpen;
         public bool IsOpen => _isOpen;
 
-        public DeveloperToolsWindow(DeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry pageRegistry)
+        public DeveloperToolsWindow(DeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, DeveloperToolsPageRegistry<VisualElement> pageRegistry)
         {
             _settings = settings;
             _optionsRegistry = optionsRegistry;
             _pageRegistry = pageRegistry;
-            _pages = new List<IDeveloperToolsElementPage>();
+            _pages = new List<IDeveloperToolsPage<VisualElement>>();
             _tabs = new List<Button>();
             _geometryChangedHandler = HandleGeometryChanged;
         }
@@ -251,10 +251,7 @@ namespace GroveGames.DeveloperTools.Unity
 
             for (var i = 0; i < _pageRegistry.Count; i++)
             {
-                if (_pageRegistry.Get(i) is IDeveloperToolsElementPage page)
-                {
-                    _pages.Add(page);
-                }
+                _pages.Add(_pageRegistry.Get(i));
             }
 
             RebuildTabs();

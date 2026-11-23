@@ -2,11 +2,11 @@
 
 namespace GroveGames.DeveloperTools;
 
-public sealed class DeveloperToolsPageRegistry
+public sealed class DeveloperToolsPageRegistry<TRoot>
 {
     public const int DefaultOrder = 1000;
 
-    private readonly List<IDeveloperToolsPage> _pages;
+    private readonly List<IDeveloperToolsPage<TRoot>> _pages;
     private readonly List<int> _orders;
 
     private int _version;
@@ -15,21 +15,21 @@ public sealed class DeveloperToolsPageRegistry
 
     public DeveloperToolsPageRegistry()
     {
-        _pages = new List<IDeveloperToolsPage>();
+        _pages = new List<IDeveloperToolsPage<TRoot>>();
         _orders = new List<int>();
     }
 
-    public IDeveloperToolsPage Get(int index)
+    public IDeveloperToolsPage<TRoot> Get(int index)
     {
         return _pages[index];
     }
 
-    public void Add(IDeveloperToolsPage page)
+    public void Add(IDeveloperToolsPage<TRoot> page)
     {
         Add(page, DefaultOrder);
     }
 
-    public void Add(IDeveloperToolsPage page, int order)
+    public void Add(IDeveloperToolsPage<TRoot> page, int order)
     {
         if (_pages.Contains(page))
         {
@@ -48,7 +48,7 @@ public sealed class DeveloperToolsPageRegistry
         _version++;
     }
 
-    public void Remove(IDeveloperToolsPage page)
+    public void Remove(IDeveloperToolsPage<TRoot> page)
     {
         var index = _pages.IndexOf(page);
 

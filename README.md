@@ -12,7 +12,7 @@ In-app developer tools: an options model read from annotated fields and methods,
 - `[DeveloperOption]` turns a field into a toggle, slider, number, text, enum or parsable input, and a method into a button
 - `DeveloperOptionsReader` reads a class once and returns its options with label, header, tooltip and limits
 - `DeveloperOptionsRegistry` holds the option objects that are currently alive
-- `IDeveloperToolsPage` and `DeveloperToolsPageRegistry` hold the pages a tools window shows, in order
+- `IDeveloperToolsPage<TRoot>` and `DeveloperToolsPageRegistry<TRoot>` hold the pages a tools window shows, in order; the engine picks the root type
 - `CornerTapGesture` detects quick taps in the top left corner of the screen
 - Unity: a window built with UI Toolkit, an options page, pages that other packages add, and a settings asset
 

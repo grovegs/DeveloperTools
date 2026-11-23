@@ -1,15 +1,16 @@
 using System;
 using GroveGames.DependencyInjection;
+using UnityEngine.UIElements;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class DeveloperToolsPageRegistration<TPage> : IInitializable, IDisposable where TPage : class, IDeveloperToolsElementPage
+    public sealed class DeveloperToolsPageRegistration<TPage> : IInitializable, IDisposable where TPage : class, IDeveloperToolsPage<VisualElement>
     {
-        private readonly DeveloperToolsPageRegistry _registry;
+        private readonly DeveloperToolsPageRegistry<VisualElement> _registry;
         private readonly TPage _page;
         private readonly int _order;
 
-        public DeveloperToolsPageRegistration(DeveloperToolsPageRegistry registry, TPage page, int order)
+        public DeveloperToolsPageRegistration(DeveloperToolsPageRegistry<VisualElement> registry, TPage page, int order)
         {
             _registry = registry;
             _page = page;
