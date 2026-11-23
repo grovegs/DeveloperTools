@@ -7,10 +7,10 @@ namespace GroveGames.DeveloperTools.Unity
 {
     public sealed class DeveloperToolsInputBlocker : IInitializable, IDisposable, IPointerDownHandler
     {
-        private readonly DeveloperToolsWindow _window;
+        private readonly UnityDeveloperToolsWindow _window;
         private readonly IPointerDispatcher _pointerDispatcher;
 
-        public DeveloperToolsInputBlocker(DeveloperToolsWindow window, IPointerDispatcher pointerDispatcher)
+        public DeveloperToolsInputBlocker(UnityDeveloperToolsWindow window, IPointerDispatcher pointerDispatcher)
         {
             _window = window;
             _pointerDispatcher = pointerDispatcher;

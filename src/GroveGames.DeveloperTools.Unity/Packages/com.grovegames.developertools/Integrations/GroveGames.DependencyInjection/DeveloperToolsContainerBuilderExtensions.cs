@@ -10,7 +10,7 @@ namespace GroveGames.DeveloperTools.Unity
             builder.AddSingleton(DeveloperToolsSettings.GetOrCreate());
             builder.AddSingleton<DeveloperOptionsRegistry>();
             builder.AddSingleton<DeveloperToolsPageRegistry<VisualElement>>();
-            builder.AddSingleton<DeveloperToolsWindow>();
+            builder.AddSingleton<UnityDeveloperToolsWindow>();
 #if GROVEGAMES_INPUT
             builder.AddSingleton<DeveloperToolsInputBlocker>();
 #endif
