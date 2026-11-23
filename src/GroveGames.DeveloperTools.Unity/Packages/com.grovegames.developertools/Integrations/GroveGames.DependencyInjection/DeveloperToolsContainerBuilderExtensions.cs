@@ -22,7 +22,7 @@ namespace GroveGames.DeveloperTools.Unity
             return builder.AddSingleton<DeveloperOptionsRegistration<TOptions>>();
         }
 
-        public static IContainerBuilder AddDeveloperToolsPage<TPage>(this IContainerBuilder builder, int order = DeveloperToolsPageRegistry.DefaultOrder) where TPage : class, IDeveloperToolsPage
+        public static IContainerBuilder AddDeveloperToolsPage<TPage>(this IContainerBuilder builder, int order = DeveloperToolsPageRegistry.DefaultOrder) where TPage : class, IDeveloperToolsElementPage
         {
             builder.AddSingleton<TPage>();
             return builder.AddSingleton<DeveloperToolsPageRegistration<TPage>>(resolver => new DeveloperToolsPageRegistration<TPage>(resolver.Resolve<DeveloperToolsPageRegistry>(), resolver.Resolve<TPage>(), order));

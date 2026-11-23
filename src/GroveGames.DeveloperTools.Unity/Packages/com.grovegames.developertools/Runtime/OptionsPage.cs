@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class OptionsPage : IDeveloperToolsPage
+    public sealed class OptionsPage : IDeveloperToolsElementPage
     {
         private const string AllCategory = "All";
         private const float ChevronSize = 32f;

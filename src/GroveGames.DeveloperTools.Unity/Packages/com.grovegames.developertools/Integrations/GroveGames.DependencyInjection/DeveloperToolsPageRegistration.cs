@@ -3,7 +3,7 @@ using GroveGames.DependencyInjection;
 
 namespace GroveGames.DeveloperTools.Unity
 {
-    public sealed class DeveloperToolsPageRegistration<TPage> : IInitializable, IDisposable where TPage : class, IDeveloperToolsPage
+    public sealed class DeveloperToolsPageRegistration<TPage> : IInitializable, IDisposable where TPage : class, IDeveloperToolsElementPage
     {
         private readonly DeveloperToolsPageRegistry _registry;
         private readonly TPage _page;
