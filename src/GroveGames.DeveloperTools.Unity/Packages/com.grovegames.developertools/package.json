@@ -1,0 +1,23 @@
+{
+  "name": "com.grovegames.developertools",
+  "version": "0.0.0",
+  "displayName": "GroveGames.DeveloperTools",
+  "description": "In-app developer tools: an options model read from annotated fields and methods, with a UI Toolkit window for Unity",
+  "unity": "6000.3",
+  "documentationUrl": "https://github.com/grovegs/DeveloperTools",
+  "changelogUrl": "https://github.com/grovegs/DeveloperTools/releases",
+  "licensesUrl": "https://github.com/grovegs/DeveloperTools/blob/main/LICENSE",
+  "keywords": [
+    "developer-tools",
+    "debug",
+    "cheats",
+    "options"
+  ],
+  "author": {
+    "name": "Grove Games",
+    "url": "https://github.com/grovegs"
+  },
+  "dependencies": {
+    "com.unity.inputsystem": "1.20.1"
+  }
+}

@@ -1,0 +1,38 @@
+@import url("unity-theme://default");
+
+.unity-scroll-view__vertical-scroller {
+    width: 16px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+}
+
+.unity-scroll-view__vertical-scroller > .unity-scroller__slider {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.unity-scroll-view__vertical-scroller .unity-base-slider__tracker {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.unity-scroll-view__vertical-scroller .unity-base-slider__dragger {
+    width: 8px;
+    left: 4px;
+    margin-left: 0;
+    margin-right: 0;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: rgba(158, 168, 184, 0.5);
+}
+
+.unity-scroll-view__vertical-scroller .unity-base-slider__dragger-border {
+    display: none;
+}

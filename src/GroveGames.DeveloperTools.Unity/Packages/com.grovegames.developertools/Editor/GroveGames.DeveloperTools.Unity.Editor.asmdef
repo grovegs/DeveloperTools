@@ -1,0 +1,18 @@
+{
+    "name": "GroveGames.DeveloperTools.Unity.Editor",
+    "rootNamespace": "GroveGames.DeveloperTools.Unity.Editor",
+    "references": [
+        "GroveGames.DeveloperTools.Unity"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
