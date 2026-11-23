@@ -1,7 +1,7 @@
 #if GROVEGAMES_INPUT
 using System;
 using GroveGames.DependencyInjection;
-using GroveGames.Input.Unity;
+using GroveGames.Input;
 
 namespace GroveGames.DeveloperTools.Unity
 {
