@@ -7,8 +7,8 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Add_Pages_KeepsRegistrationOrderAndIncreasesVersion()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var first = new TestPage();
-        var second = new TestPage();
+        var first = new FakePage();
+        var second = new FakePage();
 
         registry.Add(first);
         registry.Add(second);
@@ -23,9 +23,9 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Add_PagesWithOrder_SortsByOrder()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var later = new TestPage();
-        var custom = new TestPage();
-        var first = new TestPage();
+        var later = new FakePage();
+        var custom = new FakePage();
+        var first = new FakePage();
 
         registry.Add(later, 200);
         registry.Add(custom);
@@ -40,8 +40,8 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Add_PagesWithSameOrder_KeepsRegistrationOrder()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var first = new TestPage();
-        var second = new TestPage();
+        var first = new FakePage();
+        var second = new FakePage();
 
         registry.Add(first, 100);
         registry.Add(second, 100);
@@ -54,9 +54,9 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Remove_PageWithOrder_KeepsOrderOfOthers()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var first = new TestPage();
-        var second = new TestPage();
-        var third = new TestPage();
+        var first = new FakePage();
+        var second = new FakePage();
+        var third = new FakePage();
         registry.Add(first, 100);
         registry.Add(second, 200);
         registry.Add(third, 300);
@@ -73,7 +73,7 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Add_SamePageTwice_KeepsOneEntry()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var page = new TestPage();
+        var page = new FakePage();
 
         registry.Add(page);
         registry.Add(page);
@@ -86,7 +86,7 @@ public sealed class DeveloperToolsPageRegistryTests
     public void Remove_RegisteredPage_RemovesEntryAndIncreasesVersion()
     {
         var registry = new DeveloperToolsPageRegistry<string>();
-        var page = new TestPage();
+        var page = new FakePage();
         registry.Add(page);
 
         registry.Remove(page);
@@ -100,12 +100,12 @@ public sealed class DeveloperToolsPageRegistryTests
     {
         var registry = new DeveloperToolsPageRegistry<string>();
 
-        registry.Remove(new TestPage());
+        registry.Remove(new FakePage());
 
         Assert.Equal(0, registry.Version);
     }
 
-    private sealed class TestPage : IDeveloperToolsPage<string>
+    private sealed class FakePage : IDeveloperToolsPage<string>
     {
         public string Title => "Sample";
         public string Root => "Root";
