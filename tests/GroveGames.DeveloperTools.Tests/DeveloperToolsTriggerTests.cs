@@ -19,13 +19,13 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void Constructor_NullSettings_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => new DeveloperToolsTrigger(new TestWindow(), null!));
+        Assert.Throws<ArgumentNullException>(() => new DeveloperToolsTrigger(new FakeWindow(), null!));
     }
 
     [Fact]
     public void PressToggleKey_ClosedWindow_OpensIt()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressToggleKey();
@@ -36,7 +36,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressToggleKey_OpenWindow_ClosesIt()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
         window.Open();
 
@@ -48,7 +48,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressPointer_EnoughQuickTapsInCorner_OpensTheWindow()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
@@ -63,7 +63,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressPointer_TapBeforeTheLast_ShowsTheHintWithProgress()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
@@ -79,7 +79,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressPointer_LastTap_OpensWithoutAHint()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 1, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
@@ -91,7 +91,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressPointer_OutsideCorner_ResetsTheTaps()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 3, 0.5f));
 
         trigger.PressPointer(s_topLeft, 0f, SafeAreaTop, CornerSize, 0f);
@@ -106,7 +106,7 @@ public sealed class DeveloperToolsTriggerTests
     [Fact]
     public void PressPointer_OpenWindow_DoesNothing()
     {
-        var window = new TestWindow();
+        var window = new FakeWindow();
         var trigger = new DeveloperToolsTrigger(window, new DeveloperToolsSettings(160, 1, 0.5f));
         window.Open();
 
@@ -116,7 +116,7 @@ public sealed class DeveloperToolsTriggerTests
         Assert.Equal(0, window.HintCount);
     }
 
-    private sealed class TestWindow : IDeveloperToolsWindow
+    private sealed class FakeWindow : IDeveloperToolsWindow
     {
         private bool _isOpen;
         private int _openCount;
