@@ -13,7 +13,7 @@ namespace GroveGames.DeveloperTools.Unity
             _trigger = new UnityDeveloperToolsTrigger(settings, window);
         }
 
-        public void FrameUpdate(float deltaTime)
+        public void FrameUpdate(DeltaTime deltaTime)
         {
             _trigger.Update();
             _window.Update();
