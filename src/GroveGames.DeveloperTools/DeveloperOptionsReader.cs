@@ -15,6 +15,8 @@ public static class DeveloperOptionsReader
     private const string TryParseMethodName = "TryParse";
     private const string ReadOnlyProblem = "Read-only fields are not supported";
     private const string ParametersProblem = "Methods with parameters are not supported";
+    private const string StaticFieldProblem = "Static fields are not supported";
+    private const string StaticMethodProblem = "Static methods are not supported";
     private static readonly Dictionary<Type, IReadOnlyList<DeveloperOption>> s_cache = new();
 
 #if NET
@@ -31,7 +33,7 @@ public static class DeveloperOptionsReader
         var validate = type.GetMethod(ValidateMethodName, MemberFlags, null, Type.EmptyTypes, null);
         string? header = null;
 
-        foreach (var field in type.GetFields(MemberFlags))
+        foreach (var field in type.GetFields(MemberFlags | BindingFlags.Static))
         {
             var attribute = field.GetCustomAttribute<DeveloperOptionAttribute>();
 
@@ -40,7 +42,7 @@ public static class DeveloperOptionsReader
                 continue;
             }
 
-            if (attribute.Header != null)
+            if (attribute.Header != null && !field.IsStatic)
             {
                 header = attribute.Header;
             }
@@ -52,7 +54,7 @@ public static class DeveloperOptionsReader
             options.Add(new DeveloperOption(kind, label, header, attribute.Tooltip, field, min, max, validate, tryParse, problem));
         }
 
-        foreach (var method in type.GetMethods(MemberFlags))
+        foreach (var method in type.GetMethods(MemberFlags | BindingFlags.Static))
         {
             var attribute = method.GetCustomAttribute<DeveloperOptionAttribute>();
 
@@ -62,7 +64,7 @@ public static class DeveloperOptionsReader
             }
 
             var label = attribute.Label ?? Nicify(method.Name);
-            var problem = method.GetParameters().Length > 0 ? ParametersProblem : null;
+            var problem = method.IsStatic ? StaticMethodProblem : method.GetParameters().Length > 0 ? ParametersProblem : null;
             options.Add(new DeveloperOption(label, method, problem));
         }
 
@@ -117,6 +119,11 @@ public static class DeveloperOptionsReader
 
     private static string? GetProblem(FieldInfo field, DeveloperOptionKind kind)
     {
+        if (field.IsStatic)
+        {
+            return StaticFieldProblem;
+        }
+
         if (field.IsInitOnly)
         {
             return ReadOnlyProblem;
@@ -140,7 +147,7 @@ public static class DeveloperOptionsReader
         min = float.NegativeInfinity;
         max = float.PositiveInfinity;
 
-        if (field.IsInitOnly)
+        if (field.IsStatic || field.IsInitOnly)
         {
             return DeveloperOptionKind.Unsupported;
         }
