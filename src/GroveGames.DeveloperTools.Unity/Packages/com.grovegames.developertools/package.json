@@ -1,6 +1,6 @@
 {
   "name": "com.grovegames.developertools",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "displayName": "GroveGames.DeveloperTools",
   "description": "In-app developer tools: an options model read from annotated fields and methods, with a UI Toolkit window for Unity",
   "unity": "6000.3",
