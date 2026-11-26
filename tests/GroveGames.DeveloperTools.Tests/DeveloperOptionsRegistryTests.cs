@@ -7,8 +7,8 @@ public sealed class DeveloperOptionsRegistryTests
     public void Add_Options_KeepsRegistrationOrderAndIncreasesVersion()
     {
         var registry = new DeveloperOptionsRegistry();
-        var first = new TestDeveloperOptions();
-        var second = new TestDeveloperOptions();
+        var first = new FakeDeveloperOptions();
+        var second = new FakeDeveloperOptions();
 
         registry.Add(first);
         registry.Add(second);
@@ -23,7 +23,7 @@ public sealed class DeveloperOptionsRegistryTests
     public void Add_SameOptionsTwice_KeepsOneEntry()
     {
         var registry = new DeveloperOptionsRegistry();
-        var options = new TestDeveloperOptions();
+        var options = new FakeDeveloperOptions();
 
         registry.Add(options);
         registry.Add(options);
@@ -36,7 +36,7 @@ public sealed class DeveloperOptionsRegistryTests
     public void Remove_RegisteredOptions_RemovesEntryAndIncreasesVersion()
     {
         var registry = new DeveloperOptionsRegistry();
-        var options = new TestDeveloperOptions();
+        var options = new FakeDeveloperOptions();
         registry.Add(options);
 
         registry.Remove(options);
@@ -50,12 +50,12 @@ public sealed class DeveloperOptionsRegistryTests
     {
         var registry = new DeveloperOptionsRegistry();
 
-        registry.Remove(new TestDeveloperOptions());
+        registry.Remove(new FakeDeveloperOptions());
 
         Assert.Equal(0, registry.Version);
     }
 
-    private sealed class TestDeveloperOptions : IDeveloperOptions
+    private sealed class FakeDeveloperOptions : IDeveloperOptions
     {
         public string Category => "Sample";
     }
