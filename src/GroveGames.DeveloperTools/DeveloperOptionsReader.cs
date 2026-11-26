@@ -42,7 +42,7 @@ public static class DeveloperOptionsReader
                 continue;
             }
 
-            if (attribute.Header != null)
+            if (attribute.Header != null && !field.IsStatic)
             {
                 header = attribute.Header;
             }
