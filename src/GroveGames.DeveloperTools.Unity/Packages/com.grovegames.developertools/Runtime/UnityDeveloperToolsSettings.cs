@@ -57,5 +57,10 @@ namespace GroveGames.DeveloperTools.Unity
 
             return s_instance;
         }
+
+        private void OnValidate()
+        {
+            _referenceResolution = Vector2Int.Max(_referenceResolution, Vector2Int.one);
+        }
     }
 }

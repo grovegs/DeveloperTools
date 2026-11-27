@@ -42,8 +42,14 @@ public sealed class DeveloperOption
         _validate = validate;
     }
 
-    public DeveloperOption(string label, MethodInfo method, string? problem)
+    public DeveloperOption(string label, MethodInfo method, string? problem) : this(label, null, null, method, problem)
     {
+    }
+
+    public DeveloperOption(string label, string? header, string? tooltip, MethodInfo method, string? problem)
+    {
+        _header = header;
+        _tooltip = tooltip;
         _kind = problem == null ? DeveloperOptionKind.Action : DeveloperOptionKind.Unsupported;
         _problem = problem;
         _label = label;

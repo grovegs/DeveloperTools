@@ -24,7 +24,9 @@ namespace GroveGames.DeveloperTools.Unity
         private FloatField? _floatField;
         private TextField? _textField;
         private Button[]? _enumButtons;
-        private Array? _enumValues;
+        private object[]? _enumValues;
+        private object? _parsableValue;
+        private bool _hasParsableValue;
 
         private readonly VisualElement _root;
         public VisualElement Root => _root;
@@ -55,6 +57,16 @@ namespace GroveGames.DeveloperTools.Unity
                 var button = DeveloperToolsStyle.CreateButton(option.Label, HandleActionClicked);
                 button.style.marginRight = 0f;
                 Root.Add(button);
+
+                if (option.Tooltip != null)
+                {
+                    var actionTooltip = new Label(option.Tooltip);
+                    actionTooltip.style.fontSize = DeveloperToolsStyle.FontSize;
+                    actionTooltip.style.color = DeveloperToolsStyle.MutedTextColor;
+                    actionTooltip.style.whiteSpace = WhiteSpace.Normal;
+                    Root.Add(actionTooltip);
+                }
+
                 return;
             }
 
@@ -159,12 +171,19 @@ namespace GroveGames.DeveloperTools.Unity
                     _textField!.SetValueWithoutNotify(value as string ?? string.Empty);
                     break;
                 case DeveloperOptionKind.Parsable:
+                    if (_hasParsableValue && Equals(_parsableValue, value))
+                    {
+                        break;
+                    }
+
+                    _parsableValue = value;
+                    _hasParsableValue = true;
                     _textField!.SetValueWithoutNotify(value?.ToString() ?? string.Empty);
                     break;
                 case DeveloperOptionKind.Enum:
                     for (var i = 0; i < _enumButtons!.Length; i++)
                     {
-                        var isSelected = Equals(_enumValues!.GetValue(i), value);
+                        var isSelected = Equals(_enumValues![i], value);
                         _enumButtons[i].style.backgroundColor = isSelected ? DeveloperToolsStyle.AccentColor : DeveloperToolsStyle.ControlColor;
                     }
 
@@ -218,12 +237,13 @@ namespace GroveGames.DeveloperTools.Unity
             var row = DeveloperToolsStyle.CreateRow();
             row.style.flexWrap = Wrap.Wrap;
             row.style.marginBottom = 0f;
-            _enumValues = values;
+            _enumValues = new object[values.Length];
             _enumButtons = new Button[values.Length];
 
             for (var i = 0; i < values.Length; i++)
             {
-                var value = values.GetValue(i);
+                var value = values.GetValue(i)!;
+                _enumValues[i] = value;
                 var button = DeveloperToolsStyle.CreateButton(DeveloperOptionsReader.Nicify(names[i]), () => SetValue(value));
                 button.style.marginTop = DeveloperToolsStyle.Spacing;
                 _enumButtons[i] = button;
@@ -283,7 +303,18 @@ namespace GroveGames.DeveloperTools.Unity
 
         private void HandleIntegerChanged(ChangeEvent<int> changeEvent)
         {
-            SetValue((int)Mathf.Clamp(changeEvent.newValue, _option.Min, _option.Max));
+            var value = changeEvent.newValue;
+
+            if (value < (double)_option.Min)
+            {
+                value = (int)Math.Ceiling(_option.Min);
+            }
+            else if (value > (double)_option.Max)
+            {
+                value = (int)Math.Floor(_option.Max);
+            }
+
+            SetValue(value);
         }
 
         private void HandleFloatChanged(ChangeEvent<float> changeEvent)
@@ -300,10 +331,12 @@ namespace GroveGames.DeveloperTools.Unity
         {
             if (_option.TryParse(changeEvent.newValue ?? string.Empty, out var value))
             {
+                _hasParsableValue = false;
                 SetValue(value);
                 return;
             }
 
+            _hasParsableValue = false;
             Read();
         }
 
