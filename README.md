@@ -90,6 +90,8 @@ builder.AddDeveloperOptions<GameplayDeveloperOptions>();
 builder.AddDeveloperToolsPage<LogsPage>();
 ```
 
+With [GroveGames.Input](https://github.com/grovegs/Input) installed, pointer presses and key presses sent through its dispatchers do not reach the game while the window is open. Each dispatcher the game registers is blocked; none is required.
+
 The window opens with a triple tap in the top left corner or with the toggle key. Both are set in Project Settings > GroveGames > Developer Tools, stored in a `UnityDeveloperToolsSettings` asset. It implements `IDeveloperToolsSettings` and adds the toggle key, the theme and the fonts.
 
 Options are read by reflection. With managed stripping above Minimal, mark `OnValidate()` with `[UnityEngine.Scripting.Preserve]`. A parsable field whose type comes from the .NET class libraries, such as `Version`, needs that type kept in a `link.xml`, because Unity strips those libraries at every stripping level.

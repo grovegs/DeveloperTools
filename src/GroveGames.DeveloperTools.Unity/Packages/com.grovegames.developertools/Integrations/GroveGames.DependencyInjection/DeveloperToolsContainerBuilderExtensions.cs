@@ -1,4 +1,7 @@
 using GroveGames.DependencyInjection;
+#if GROVEGAMES_INPUT
+using GroveGames.Input;
+#endif
 using UnityEngine.UIElements;
 
 namespace GroveGames.DeveloperTools.Unity
@@ -14,7 +17,12 @@ namespace GroveGames.DeveloperTools.Unity
             builder.AddSingleton<IDeveloperToolsPageRegistry<VisualElement>, UnityDeveloperToolsPageRegistry>();
             builder.AddSingleton<UnityDeveloperToolsWindow>();
 #if GROVEGAMES_INPUT
-            builder.AddSingleton<DeveloperToolsInputBlocker>();
+            builder.AddSingleton<DeveloperToolsInputBlocker>(resolver =>
+            {
+                resolver.TryResolve<IPointerDispatcher>(out var pointerDispatcher);
+                resolver.TryResolve<IKeyboardDispatcher>(out var keyboardDispatcher);
+                return new DeveloperToolsInputBlocker(resolver.Resolve<UnityDeveloperToolsWindow>(), pointerDispatcher, keyboardDispatcher);
+            });
 #endif
             return builder.AddSingleton<DeveloperToolsEntryPoint>();
         }
