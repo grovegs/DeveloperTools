@@ -19,6 +19,13 @@ namespace GroveGames.DeveloperTools.Unity
             return builder.AddSingleton<DeveloperToolsEntryPoint>();
         }
 
+#if GROVEGAMES_INPUT
+        public static IContainerBuilder AddDeveloperToolsKeyboardBlocker(this IContainerBuilder builder)
+        {
+            return builder.AddSingleton<DeveloperToolsKeyboardBlocker>();
+        }
+
+#endif
         public static IContainerBuilder AddDeveloperOptions<TOptions>(this IContainerBuilder builder) where TOptions : class, IDeveloperOptions
         {
             builder.AddSingleton<TOptions>();
