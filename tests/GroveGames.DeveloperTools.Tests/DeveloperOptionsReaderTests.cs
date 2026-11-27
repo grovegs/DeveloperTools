@@ -165,7 +165,28 @@ public sealed class DeveloperOptionsReaderTests
     {
         var options = DeveloperOptionsReader.Read(typeof(FakeLimitDeveloperOptions));
 
-        Assert.Equal("Min is greater than Max", options[1].Problem);
+        Assert.Equal("No value fits between Min and Max", options[1].Problem);
+    }
+
+    [Fact]
+    public void Read_IntegerLimitsWithoutWholeNumber_ReportsProblem()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeLimitDeveloperOptions));
+
+        Assert.Equal("No value fits between Min and Max", options[2].Problem);
+        Assert.Null(options[3].Problem);
+    }
+
+    [Fact]
+    public void Read_OverriddenAction_IsReadOnce()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeOverrideDeveloperOptions));
+        var target = new FakeOverrideDeveloperOptions();
+
+        options[0].Invoke(target);
+
+        Assert.Single(options);
+        Assert.Equal(1, target.OverrideCount);
     }
 
     [Fact]
@@ -200,6 +221,8 @@ public sealed class DeveloperOptionsReaderTests
     {
         [DeveloperOption(Max = 1f)] private float _volume;
         [DeveloperOption(Min = 5f, Max = 1f)] private float _inverted;
+        [DeveloperOption(Min = 0.2f, Max = 0.8f)] private int _between;
+        [DeveloperOption(Min = 0.5f, Max = 1.5f)] private int _one;
 
         public string Category => "Limits";
     }
@@ -230,6 +253,28 @@ public sealed class DeveloperOptionsReaderTests
         [DeveloperOption(Header = "Actions")]
         private void DerivedAction()
         {
+        }
+    }
+
+    private class FakeVirtualDeveloperOptions : IDeveloperOptions
+    {
+        public string Category => "Virtual";
+
+        [DeveloperOption]
+        protected virtual void ResetAll()
+        {
+        }
+    }
+
+    private sealed class FakeOverrideDeveloperOptions : FakeVirtualDeveloperOptions
+    {
+        private int _overrideCount;
+
+        public int OverrideCount => _overrideCount;
+
+        protected override void ResetAll()
+        {
+            _overrideCount++;
         }
     }
 

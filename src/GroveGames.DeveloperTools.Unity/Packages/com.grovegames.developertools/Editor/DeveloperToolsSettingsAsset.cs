@@ -17,6 +17,11 @@ namespace GroveGames.DeveloperTools.Unity.Editor
         [InitializeOnLoadMethod]
         private static void CreateOnLoad()
         {
+            if (Application.isBatchMode || AssetDatabase.IsAssetImportWorkerProcess())
+            {
+                return;
+            }
+
             EditorApplication.delayCall += HandleDelayCall;
         }
 

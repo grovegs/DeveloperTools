@@ -17,7 +17,7 @@ public static class DeveloperOptionsReader
     private const string ParametersProblem = "Methods with parameters are not supported";
     private const string StaticFieldProblem = "Static fields are not supported";
     private const string StaticMethodProblem = "Static methods are not supported";
-    private const string LimitsProblem = "Min is greater than Max";
+    private const string LimitsProblem = "No value fits between Min and Max";
     private static readonly Dictionary<Type, IReadOnlyList<DeveloperOption>> s_cache = new();
 
 #if NET
@@ -75,9 +75,16 @@ public static class DeveloperOptionsReader
         {
             foreach (var method in hierarchy[i].GetMethods(MemberFlags | BindingFlags.Static))
             {
-                var attribute = method.GetCustomAttribute<DeveloperOptionAttribute>();
+                var attribute = method.GetCustomAttribute<DeveloperOptionAttribute>(false);
 
                 if (attribute == null)
+                {
+                    continue;
+                }
+
+                var definition = method.GetBaseDefinition();
+
+                if (definition != method && definition.IsDefined(typeof(DeveloperOptionAttribute), false))
                 {
                     continue;
                 }
@@ -159,7 +166,12 @@ public static class DeveloperOptionsReader
             return $"{field.FieldType.Name} is not supported";
         }
 
-        return min > max ? LimitsProblem : null;
+        if (min > max || (field.FieldType == typeof(int) && Math.Ceiling(min) > Math.Floor(max)))
+        {
+            return LimitsProblem;
+        }
+
+        return null;
     }
 
 #if NET

@@ -197,7 +197,7 @@ namespace GroveGames.DeveloperTools.Unity
             {
                 _integerField = CreateIntegerField();
                 header.Add(_integerField);
-                _sliderInt = new SliderInt((int)_option.Min, (int)_option.Max);
+                _sliderInt = new SliderInt((int)Math.Ceiling(_option.Min), (int)Math.Floor(_option.Max));
                 _sliderInt.RegisterValueChangedCallback(HandleIntegerChanged);
                 StyleSlider(_sliderInt);
                 Root.Add(_sliderInt);

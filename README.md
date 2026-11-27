@@ -52,7 +52,7 @@ public sealed class GameplayDeveloperOptions : IDeveloperOptions
 var options = DeveloperOptionsReader.Read(typeof(GameplayDeveloperOptions));
 ```
 
-- A field with both `Min` and `Max` is a slider; with only one of them the value is kept on that side. `Header` applies to the member it is set on and to every member after it. Fields are listed before actions, and members declared in a base class come before those of the derived class.
+- An `int` or `float` field with both `Min` and `Max` is a slider; with only one of them the value is kept on that side. Other number types ignore the limits. `Header` applies to the member it is set on and to every member after it. Fields are listed before actions, and members declared in a base class come before those of the derived class.
 - A field of a type with a static `TryParse(string, out T)` is a text input that parses to that type.
 - A private `OnValidate()` method runs after every value change.
 - Options are read by reflection. In a trimmed or AOT build, keep the marked members.
