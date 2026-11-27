@@ -14,6 +14,22 @@ namespace GroveGames.DeveloperTools.Unity.Editor
         private const string ThemePath = "Packages/com.grovegames.developertools/Runtime/Themes/DeveloperToolsTheme.tss";
         private const string LogoPath = "Packages/com.grovegames.developertools/Runtime/Icons/GroveGamesLogo.png";
 
+        [InitializeOnLoadMethod]
+        private static void CreateOnLoad()
+        {
+            if (Application.isBatchMode || AssetDatabase.IsAssetImportWorkerProcess())
+            {
+                return;
+            }
+
+            EditorApplication.delayCall += HandleDelayCall;
+        }
+
+        private static void HandleDelayCall()
+        {
+            GetOrCreate();
+        }
+
         public static UnityDeveloperToolsSettings GetOrCreate()
         {
             if (!EditorBuildSettings.TryGetConfigObject(UnityDeveloperToolsSettings.ConfigName, out UnityDeveloperToolsSettings settings) || settings == null)
@@ -22,6 +38,7 @@ namespace GroveGames.DeveloperTools.Unity.Editor
                 EditorBuildSettings.AddConfigObject(UnityDeveloperToolsSettings.ConfigName, settings, true);
             }
 
+            AssignTheme(settings);
             AssignLogo(settings);
             Preload(settings);
             return settings;
@@ -38,12 +55,29 @@ namespace GroveGames.DeveloperTools.Unity.Editor
             }
 
             var created = ScriptableObject.CreateInstance<UnityDeveloperToolsSettings>();
-            var serialized = new SerializedObject(created);
-            serialized.FindProperty("_theme").objectReferenceValue = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(ThemePath);
-            serialized.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.CreateAsset(created, AssetPath);
             AssetDatabase.SaveAssets();
             return AssetDatabase.LoadAssetAtPath<UnityDeveloperToolsSettings>(AssetPath);
+        }
+
+        private static void AssignTheme(UnityDeveloperToolsSettings settings)
+        {
+            if (settings.Theme != null)
+            {
+                return;
+            }
+
+            var theme = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(ThemePath);
+
+            if (theme == null)
+            {
+                return;
+            }
+
+            var serialized = new SerializedObject(settings);
+            serialized.FindProperty("_theme").objectReferenceValue = theme;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            AssetDatabase.SaveAssetIfDirty(settings);
         }
 
         private static void AssignLogo(UnityDeveloperToolsSettings settings)

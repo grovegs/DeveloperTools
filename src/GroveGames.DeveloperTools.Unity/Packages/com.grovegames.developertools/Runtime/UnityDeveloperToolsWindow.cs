@@ -34,9 +34,31 @@ namespace GroveGames.DeveloperTools.Unity
         private int _pageVersion = -1;
         private float _hintHideTime;
         private Rect _hintCorner;
+        private Rect _safeArea;
 
         private bool _isOpen;
         public bool IsOpen => _isOpen;
+
+        internal bool IsEditingText
+        {
+            get
+            {
+                if (!_isOpen || _root?.panel?.focusController?.focusedElement is not VisualElement focused)
+                {
+                    return false;
+                }
+
+                for (var element = focused; element != null; element = element.parent)
+                {
+                    if (element.ClassListContains(TextInputBaseField<string>.ussClassName))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         public UnityDeveloperToolsWindow(UnityDeveloperToolsSettings settings, DeveloperOptionsRegistry optionsRegistry, IDeveloperToolsPageRegistry<VisualElement> pageRegistry)
         {
@@ -109,10 +131,25 @@ namespace GroveGames.DeveloperTools.Unity
                 HideHint();
             }
 
+            if (_optionsPage == null)
+            {
+                return;
+            }
+
+            if (Screen.safeArea != _safeArea)
+            {
+                ApplySafeArea();
+            }
+
+            SyncPages();
+
             if (IsOpen)
             {
-                SyncPages();
                 _pages[_selectedPage].Refresh(false);
+            }
+            else
+            {
+                _optionsPage.Refresh(false);
             }
         }
 
@@ -138,12 +175,16 @@ namespace GroveGames.DeveloperTools.Unity
                 return;
             }
 
+            if (_settings.Theme == null)
+            {
+                Debug.LogError("Developer Tools has no theme. Set one in Project Settings > GroveGames > Developer Tools.");
+            }
+
             _panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
             _panelSettings.themeStyleSheet = _settings.Theme;
             _panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
             _panelSettings.referenceResolution = _settings.ReferenceResolution;
-            _panelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-            _panelSettings.match = 0f;
+            _panelSettings.screenMatchMode = PanelScreenMatchMode.Shrink;
             _panelSettings.sortingOrder = _settings.SortingOrder;
 
             _host = new GameObject(HostName);
@@ -166,6 +207,7 @@ namespace GroveGames.DeveloperTools.Unity
             _root.Add(_panel);
             _hint = CreateHint();
             _root.Add(_hint);
+            _pageVersion = -1;
             SyncPages();
         }
 
@@ -347,6 +389,7 @@ namespace GroveGames.DeveloperTools.Unity
             }
 
             var safeArea = Screen.safeArea;
+            _safeArea = safeArea;
             var safeTopLeft = ToPanel(safeArea.xMin, safeArea.yMax);
             var safeBottomRight = ToPanel(safeArea.xMax, safeArea.yMin);
             var screenBottomRight = ToPanel(Screen.width, 0f);

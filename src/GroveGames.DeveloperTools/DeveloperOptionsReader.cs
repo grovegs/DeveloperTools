@@ -17,6 +17,7 @@ public static class DeveloperOptionsReader
     private const string ParametersProblem = "Methods with parameters are not supported";
     private const string StaticFieldProblem = "Static fields are not supported";
     private const string StaticMethodProblem = "Static methods are not supported";
+    private const string LimitsProblem = "No value fits between Min and Max";
     private static readonly Dictionary<Type, IReadOnlyList<DeveloperOption>> s_cache = new();
 
 #if NET
@@ -30,42 +31,73 @@ public static class DeveloperOptionsReader
         }
 
         var options = new List<DeveloperOption>();
-        var validate = type.GetMethod(ValidateMethodName, MemberFlags, null, Type.EmptyTypes, null);
-        string? header = null;
+        var hierarchy = new List<Type>();
 
-        foreach (var field in type.GetFields(MemberFlags | BindingFlags.Static))
+        for (var current = type; current != null && current != typeof(object); current = current.BaseType)
         {
-            var attribute = field.GetCustomAttribute<DeveloperOptionAttribute>();
-
-            if (attribute == null)
-            {
-                continue;
-            }
-
-            if (attribute.Header != null && !field.IsStatic)
-            {
-                header = attribute.Header;
-            }
-
-            var label = attribute.Label ?? Nicify(field.Name);
-            var tryParse = FindTryParse(field.FieldType);
-            var kind = GetKind(field, attribute, tryParse, out var min, out var max);
-            var problem = GetProblem(field, kind);
-            options.Add(new DeveloperOption(kind, label, header, attribute.Tooltip, field, min, max, validate, tryParse, problem));
+            hierarchy.Add(current);
         }
 
-        foreach (var method in type.GetMethods(MemberFlags | BindingFlags.Static))
+        MethodInfo? validate = null;
+
+        for (var i = 0; i < hierarchy.Count && validate == null; i++)
         {
-            var attribute = method.GetCustomAttribute<DeveloperOptionAttribute>();
+            validate = hierarchy[i].GetMethod(ValidateMethodName, MemberFlags, null, Type.EmptyTypes, null);
+        }
 
-            if (attribute == null)
+        string? header = null;
+
+        for (var i = hierarchy.Count - 1; i >= 0; i--)
+        {
+            foreach (var field in hierarchy[i].GetFields(MemberFlags | BindingFlags.Static))
             {
-                continue;
-            }
+                var attribute = field.GetCustomAttribute<DeveloperOptionAttribute>();
 
-            var label = attribute.Label ?? Nicify(method.Name);
-            var problem = method.IsStatic ? StaticMethodProblem : method.GetParameters().Length > 0 ? ParametersProblem : null;
-            options.Add(new DeveloperOption(label, method, problem));
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                if (attribute.Header != null && !field.IsStatic)
+                {
+                    header = attribute.Header;
+                }
+
+                var label = attribute.Label ?? Nicify(field.Name);
+                var tryParse = FindTryParse(field.FieldType);
+                var kind = GetKind(field, attribute, tryParse, out var min, out var max);
+                var problem = GetProblem(field, kind, min, max);
+                options.Add(new DeveloperOption(kind, label, header, attribute.Tooltip, field, min, max, validate, tryParse, problem));
+            }
+        }
+
+        for (var i = hierarchy.Count - 1; i >= 0; i--)
+        {
+            foreach (var method in hierarchy[i].GetMethods(MemberFlags | BindingFlags.Static))
+            {
+                var attribute = method.GetCustomAttribute<DeveloperOptionAttribute>(false);
+
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                var definition = method.GetBaseDefinition();
+
+                if (definition != method && definition.IsDefined(typeof(DeveloperOptionAttribute), false))
+                {
+                    continue;
+                }
+
+                if (attribute.Header != null && !method.IsStatic)
+                {
+                    header = attribute.Header;
+                }
+
+                var label = attribute.Label ?? Nicify(method.Name);
+                var problem = method.IsStatic ? StaticMethodProblem : method.GetParameters().Length > 0 ? ParametersProblem : null;
+                options.Add(new DeveloperOption(label, header, attribute.Tooltip, method, problem));
+            }
         }
 
         s_cache.Add(type, options);
@@ -117,7 +149,7 @@ public static class DeveloperOptionsReader
         return builder.ToString();
     }
 
-    private static string? GetProblem(FieldInfo field, DeveloperOptionKind kind)
+    private static string? GetProblem(FieldInfo field, DeveloperOptionKind kind, float min, float max)
     {
         if (field.IsStatic)
         {
@@ -129,7 +161,17 @@ public static class DeveloperOptionsReader
             return ReadOnlyProblem;
         }
 
-        return kind == DeveloperOptionKind.Unsupported ? $"{field.FieldType.Name} is not supported" : null;
+        if (kind == DeveloperOptionKind.Unsupported)
+        {
+            return $"{field.FieldType.Name} is not supported";
+        }
+
+        if (min > max || (field.FieldType == typeof(int) && Math.Ceiling(min) > Math.Floor(max)))
+        {
+            return LimitsProblem;
+        }
+
+        return null;
     }
 
 #if NET
@@ -153,6 +195,7 @@ public static class DeveloperOptionsReader
         }
 
         min = attribute.Min;
+        max = attribute.Max;
 
         if (type == typeof(bool))
         {
@@ -163,7 +206,6 @@ public static class DeveloperOptionsReader
         {
             if (!float.IsInfinity(attribute.Min) && !float.IsInfinity(attribute.Max))
             {
-                max = attribute.Max;
                 return DeveloperOptionKind.Slider;
             }
 

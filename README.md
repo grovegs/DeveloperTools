@@ -52,7 +52,7 @@ public sealed class GameplayDeveloperOptions : IDeveloperOptions
 var options = DeveloperOptionsReader.Read(typeof(GameplayDeveloperOptions));
 ```
 
-- A field with both `Min` and `Max` is a slider. `Header` applies to the field it is set on and to every field after it.
+- An `int` or `float` field with both `Min` and `Max` is a slider; with only one of them the value is kept on that side. Other number types ignore the limits. `Header` applies to the member it is set on and to every member after it. Fields are listed before actions, and members declared in a base class come before those of the derived class.
 - A field of a type with a static `TryParse(string, out T)` is a text input that parses to that type.
 - A private `OnValidate()` method runs after every value change.
 - Options are read by reflection. In a trimmed or AOT build, keep the marked members.
@@ -79,7 +79,7 @@ var options = DeveloperOptionsReader.Read(typeof(GameplayDeveloperOptions));
 
 ### Usage
 
-With [GroveGames.DependencyInjection](https://github.com/grovegs/DependencyInjection) installed:
+With [GroveGames.DependencyInjection](https://github.com/grovegs/DependencyInjection) installed, add `GROVEGAMES_DEVELOPERTOOLS` to Scripting Define Symbols of the builds that should have the tools; without it the integration is not compiled:
 
 ```csharp
 using GroveGames.DeveloperTools;
@@ -91,6 +91,8 @@ builder.AddDeveloperToolsPage<LogsPage>();
 ```
 
 The window opens with a triple tap in the top left corner or with the toggle key. Both are set in Project Settings > GroveGames > Developer Tools, stored in a `UnityDeveloperToolsSettings` asset. It implements `IDeveloperToolsSettings` and adds the toggle key, the theme and the fonts.
+
+Options are read by reflection. With managed stripping above Minimal, mark `OnValidate()` with `[UnityEngine.Scripting.Preserve]`. A parsable field whose type comes from the .NET class libraries, such as `Version`, needs that type kept in a `link.xml`, because Unity strips those libraries at every stripping level.
 
 ## Development
 

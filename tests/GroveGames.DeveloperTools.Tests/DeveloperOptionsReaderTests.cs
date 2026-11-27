@@ -150,7 +150,134 @@ public sealed class DeveloperOptionsReaderTests
         Assert.Equal("Static methods are not supported", options[1].Problem);
     }
 
+    [Fact]
+    public void Read_MaxWithoutMin_SetsMax()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeLimitDeveloperOptions));
+
+        Assert.Equal(DeveloperOptionKind.Float, options[0].Kind);
+        Assert.Equal(float.NegativeInfinity, options[0].Min);
+        Assert.Equal(1f, options[0].Max);
+    }
+
+    [Fact]
+    public void Read_MinGreaterThanMax_ReportsProblem()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeLimitDeveloperOptions));
+
+        Assert.Equal("No value fits between Min and Max", options[1].Problem);
+    }
+
+    [Fact]
+    public void Read_IntegerLimitsWithoutWholeNumber_ReportsProblem()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeLimitDeveloperOptions));
+
+        Assert.Equal("No value fits between Min and Max", options[2].Problem);
+        Assert.Null(options[3].Problem);
+    }
+
+    [Fact]
+    public void Read_OverriddenAction_IsReadOnce()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeOverrideDeveloperOptions));
+        var target = new FakeOverrideDeveloperOptions();
+
+        options[0].Invoke(target);
+
+        Assert.Single(options);
+        Assert.Equal(1, target.OverrideCount);
+    }
+
+    [Fact]
+    public void Read_DerivedClass_ReadsBaseMembersFirstAndBaseOnValidate()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeDerivedDeveloperOptions));
+        var target = new FakeDerivedDeveloperOptions();
+
+        options[1].SetValue(target, 3);
+
+        Assert.Equal(4, options.Count);
+        Assert.Equal("Base Value", options[0].Label);
+        Assert.Equal("Derived Value", options[1].Label);
+        Assert.Equal("Base Action", options[2].Label);
+        Assert.Equal("Derived Action", options[3].Label);
+        Assert.Equal(1, target.ValidateCount);
+    }
+
+    [Fact]
+    public void Read_ActionWithHeaderAndTooltip_CarriesThem()
+    {
+        var options = DeveloperOptionsReader.Read(typeof(FakeDerivedDeveloperOptions));
+
+        Assert.Equal("Base", options[2].Header);
+        Assert.Equal("Runs the base action.", options[2].Tooltip);
+        Assert.Equal("Actions", options[3].Header);
+        Assert.Null(options[3].Tooltip);
+    }
+
 #pragma warning disable IDE0044, IDE0051, IDE0060, CS0649
+    private sealed class FakeLimitDeveloperOptions : IDeveloperOptions
+    {
+        [DeveloperOption(Max = 1f)] private float _volume;
+        [DeveloperOption(Min = 5f, Max = 1f)] private float _inverted;
+        [DeveloperOption(Min = 0.2f, Max = 0.8f)] private int _between;
+        [DeveloperOption(Min = 0.5f, Max = 1.5f)] private int _one;
+
+        public string Category => "Limits";
+    }
+
+    private class FakeBaseDeveloperOptions : IDeveloperOptions
+    {
+        [DeveloperOption(Header = "Base")] private int _baseValue;
+        private int _validateCount;
+
+        public string Category => "Inherited";
+        public int ValidateCount => _validateCount;
+
+        [DeveloperOption(Tooltip = "Runs the base action.")]
+        private void BaseAction()
+        {
+        }
+
+        private void OnValidate()
+        {
+            _validateCount++;
+        }
+    }
+
+    private sealed class FakeDerivedDeveloperOptions : FakeBaseDeveloperOptions
+    {
+        [DeveloperOption] private int _derivedValue;
+
+        [DeveloperOption(Header = "Actions")]
+        private void DerivedAction()
+        {
+        }
+    }
+
+    private class FakeVirtualDeveloperOptions : IDeveloperOptions
+    {
+        public string Category => "Virtual";
+
+        [DeveloperOption]
+        protected virtual void ResetAll()
+        {
+        }
+    }
+
+    private sealed class FakeOverrideDeveloperOptions : FakeVirtualDeveloperOptions
+    {
+        private int _overrideCount;
+
+        public int OverrideCount => _overrideCount;
+
+        protected override void ResetAll()
+        {
+            _overrideCount++;
+        }
+    }
+
     private sealed class FakeStaticDeveloperOptions : IDeveloperOptions
     {
         [DeveloperOption] private static int s_count;
