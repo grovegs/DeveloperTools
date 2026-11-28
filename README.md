@@ -94,7 +94,7 @@ With [GroveGames.Input](https://github.com/grovegs/Input) installed, pointer pre
 
 The window opens with a triple tap in the top left corner or with the toggle key. Both are set in Project Settings > GroveGames > Developer Tools, stored in a `UnityDeveloperToolsSettings` asset. It implements `IDeveloperToolsSettings` and adds the toggle key, the theme and the fonts.
 
-Options are read by reflection. With managed stripping above Minimal, mark `OnValidate()` with `[UnityEngine.Scripting.Preserve]`. A parsable field whose type comes from the .NET class libraries, such as `Version`, needs that type kept in a `link.xml`, because Unity strips those libraries at every stripping level.
+Options are read by reflection, so before every player build the editor writes a `link.xml` that keeps every `[DeveloperOption]` member, each options class's `OnValidate()` and the `TryParse` of every parsable field type. They survive managed code stripping at every level without `[Preserve]` or a `link.xml` in game code.
 
 ## Development
 
