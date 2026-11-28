@@ -68,6 +68,11 @@ namespace GroveGames.DeveloperTools.Unity.Editor
             {
                 var type = member.DeclaringType;
 
+                if (type != null && type.IsGenericType)
+                {
+                    type = type.GetGenericTypeDefinition();
+                }
+
                 if (type == null || type.FullName == null)
                 {
                     continue;
